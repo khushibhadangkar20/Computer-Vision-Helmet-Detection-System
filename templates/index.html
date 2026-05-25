@@ -1,0 +1,3013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>Smart Campus Helmet Violation Detection | MIT ADT University</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <style>
+        /* ======================================================
+        DESIGN SYSTEM - Light background, Dark navy accents, Red primary
+        ====================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #f8fafd; /* Soft light background */
+            color: #0a1929; /* Dark navy text */
+            line-height: 1.6;
+        }
+
+        /* ======================================================
+        MODERN NAVBAR - Glassmorphism
+        ====================================================== */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2.5rem;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(10, 25, 41, 0.08);
+            box-shadow: 0 8px 32px -8px rgba(10, 25, 41, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, #0a1929 0%, #1a2b3c 100%);
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 8px 16px -6px rgba(10, 25, 41, 0.2);
+        }
+
+        .logo-text h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0a1929;
+            line-height: 1.2;
+        }
+
+        .logo-text span {
+            font-size: 0.8rem;
+            color: #5e6f88;
+            font-weight: 500;
+        }
+
+        .location-badge {
+            background: rgba(220, 38, 38, 0.08);
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #dc2626;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            border: 1px solid rgba(220, 38, 38, 0.2);
+        }
+
+        .location-badge i {
+            font-size: 0.9rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.8rem;
+            background: rgba(10, 25, 41, 0.03);
+            padding: 0.4rem;
+            border-radius: 60px;
+            border: 1px solid rgba(10, 25, 41, 0.06);
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #4a5a72;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link i {
+            font-size: 1rem;
+        }
+
+        .nav-link.active {
+            background: #0a1929;
+            color: white;
+            box-shadow: 0 8px 16px -8px #0a1929;
+        }
+
+        .nav-link:hover:not(.active) {
+            background: rgba(10, 25, 41, 0.08);
+            color: #0a1929;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: white;
+            padding: 0.4rem 1.2rem 0.4rem 0.8rem;
+            border-radius: 40px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            border: 1px solid rgba(10, 25, 41, 0.1);
+        }
+
+        .icon-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 16px;
+            border: 1px solid rgba(10, 25, 41, 0.1);
+            background: rgba(255,255,255,0.9);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+        }
+
+        .icon-btn:hover {
+            transform: translateY(-2px);
+            border-color: rgba(220, 38, 38, 0.35);
+        }
+
+        .badge-dot {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            min-width: 22px;
+            height: 22px;
+            padding: 0 6px;
+            border-radius: 999px;
+            background: #dc2626;
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 800;
+            border: 3px solid rgba(248, 250, 253, 0.95);
+        }
+
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: min(420px, 92vw);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(14px);
+            border-left: 1px solid rgba(10, 25, 41, 0.1);
+            box-shadow: -20px 0 50px rgba(10, 25, 41, 0.18);
+            z-index: 2100;
+            transform: translateX(100%);
+            transition: transform 0.25s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .drawer.active {
+            transform: translateX(0);
+        }
+
+        .drawer-header {
+            padding: 1.2rem 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(10, 25, 41, 0.08);
+        }
+
+        .drawer-header h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .drawer-body {
+            padding: 1rem 1.2rem;
+            overflow: auto;
+            flex: 1;
+        }
+
+        .notif-item {
+            background: white;
+            border: 1px solid rgba(10, 25, 41, 0.06);
+            border-radius: 20px;
+            padding: 0.9rem 1rem;
+            margin-bottom: 0.8rem;
+            box-shadow: 0 12px 24px -18px rgba(10, 25, 41, 0.25);
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 0.4rem 0.8rem;
+        }
+
+        .notif-item.unread {
+            border-color: rgba(220, 38, 38, 0.25);
+            background: rgba(220, 38, 38, 0.04);
+        }
+
+        .notif-title {
+            font-weight: 800;
+            color: #0a1929;
+        }
+
+        .notif-time {
+            font-size: 0.8rem;
+            color: #64748b;
+            white-space: nowrap;
+        }
+
+        .notif-meta {
+            grid-column: 1 / -1;
+            font-size: 0.9rem;
+            color: #334155;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4caf50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .status-dot.offline {
+            background: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+        }
+
+        /* ======================================================
+        MAIN CONTAINER
+        ====================================================== */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem 2.5rem;
+        }
+
+        /* ======================================================
+        HERO SECTION - Modern & Clean
+        ====================================================== */
+        .hero {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 3rem;
+            align-items: center;
+            margin-bottom: 3rem;
+            background: white;
+            border-radius: 40px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px -12px rgba(10, 25, 41, 0.15);
+            border: 1px solid rgba(10, 25, 41, 0.06);
+        }
+
+        .hero h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #0a1929 0%, #1e3a8a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero span {
+            color: #dc2626;
+            background: none;
+            -webkit-text-fill-color: #dc2626;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #4b5565;
+            margin: 1.5rem 0 2rem;
+            max-width: 90%;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .primary-btn {
+            background: #dc2626;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 10px 20px -8px #dc2626;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .primary-btn:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -10px #dc2626;
+        }
+
+        .secondary-btn {
+            background: white;
+            border: 2px solid #e2e8f0;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .secondary-btn:hover {
+            border-color: #0a1929;
+            background: #f8fafc;
+        }
+
+        .hero-image {
+            background: linear-gradient(135deg, #f1f5f9 0%, #ffffff 100%);
+            border-radius: 30px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .hero-image img {
+            width: 100%;
+            max-width: 350px;
+            filter: drop-shadow(0 20px 20px rgba(0,0,0,0.08));
+        }
+
+        /* ======================================================
+        STAT CARDS - Soft Glass Design
+        ====================================================== */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 1.8rem 1.5rem;
+            border-radius: 28px;
+            box-shadow: 0 15px 35px -15px rgba(10, 25, 41, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 40px -18px #dc2626;
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+        }
+
+        .stat-header h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #5e6f88;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-header i {
+            font-size: 1.4rem;
+            color: #dc2626;
+            opacity: 0.7;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #0a1929;
+            line-height: 1.2;
+        }
+
+        .stat-trend {
+            font-size: 0.8rem;
+            color: #10b981;
+            margin-top: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* ======================================================
+        CAMERA SECTION
+        ====================================================== */
+        .camera-grid {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr;
+            gap: 1.8rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .main-camera {
+            background: white;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px -15px rgba(10, 25, 41, 0.15);
+            border: 1px solid rgba(10, 25, 41, 0.06);
+        }
+
+        .camera-header {
+            padding: 1.2rem 1.8rem;
+            background: rgba(10, 25, 41, 0.02);
+            border-bottom: 1px solid rgba(10, 25, 41, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .camera-header h3 {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .rec-badge {
+            background: #dc2626;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .main-camera video {
+            width: 100%;
+            height: auto;
+            display: block;
+            background: #0a1929;
+        }
+
+        .camera-feed {
+            position: relative;
+        }
+
+        .detection-overlay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .camera-sidebar {
+            background: white;
+            border-radius: 32px;
+            padding: 1.5rem;
+            box-shadow: 0 20px 40px -15px rgba(10, 25, 41, 0.15);
+            border: 1px solid rgba(10, 25, 41, 0.06);
+        }
+
+        .camera-list {
+            margin-top: 1rem;
+        }
+
+        .camera-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .camera-item:hover {
+            background: #f1f5f9;
+            border-color: #e2e8f0;
+        }
+
+        .camera-item.active {
+            background: rgba(220, 38, 38, 0.06);
+            border-color: rgba(220, 38, 38, 0.2);
+        }
+
+        .camera-icon {
+            width: 40px;
+            height: 40px;
+            background: #f1f5f9;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0a1929;
+        }
+
+        .camera-info h4 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .camera-info p {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .status-badge {
+            margin-left: auto;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 40px;
+            background: #4caf50;
+            color: white;
+        }
+
+        /* ======================================================
+        CONTROLS BAR - Modern & Functional
+        ====================================================== */
+        .controls-bar {
+            background: white;
+            border-radius: 60px;
+            padding: 0.8rem 1.5rem;
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 15px 30px -15px rgba(10, 25, 41, 0.15);
+            border: 1px solid rgba(10, 25, 41, 0.06);
+        }
+
+        .search-box {
+            flex: 2;
+            min-width: 250px;
+            display: flex;
+            align-items: center;
+            background: #f1f5f9;
+            border-radius: 50px;
+            padding: 0.3rem 0.3rem 0.3rem 1.2rem;
+        }
+
+        .search-box i {
+            color: #64748b;
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            padding: 0.7rem 0.8rem;
+            width: 100%;
+            outline: none;
+            font-size: 0.95rem;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f1f5f9;
+            border-radius: 50px;
+            padding: 0.3rem 1rem;
+        }
+
+        .chip-group {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 999px;
+            padding: 0.55rem 0.9rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #0a1929;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .chip:hover {
+            transform: translateY(-2px);
+            border-color: rgba(220, 38, 38, 0.35);
+        }
+
+        .chip.active {
+            background: rgba(220, 38, 38, 0.08);
+            border-color: rgba(220, 38, 38, 0.25);
+            color: #b91c1c;
+        }
+
+        .filter-group i {
+            color: #dc2626;
+        }
+
+        .filter-group input {
+            border: none;
+            background: transparent;
+            padding: 0.5rem 0;
+            max-width: 130px;
+            outline: none;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: all 0.2s;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+            box-shadow: 0 8px 16px -8px #dc2626;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #1e293b;
+        }
+
+        .btn-outline:hover {
+            border-color: #dc2626;
+            color: #dc2626;
+        }
+
+        .auto-refresh {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: #f1f5f9;
+            padding: 0.3rem 1rem 0.3rem 1.5rem;
+            border-radius: 50px;
+        }
+
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: #cbd5e1;
+            border-radius: 40px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .toggle-switch.active {
+            background: #dc2626;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active::after {
+            left: 22px;
+        }
+
+        .last-updated {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* ======================================================
+        TABLE - Modern & Clean
+        ====================================================== */
+        .table-wrapper {
+            background: white;
+            border-radius: 32px;
+            padding: 1.5rem;
+            box-shadow: 0 20px 40px -15px rgba(10, 25, 41, 0.15);
+            border: 1px solid rgba(10, 25, 41, 0.06);
+            overflow-x: auto;
+            margin-bottom: 2rem;
+        }
+
+        .bulk-bar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(10, 25, 41, 0.08);
+            box-shadow: 0 15px 35px -15px rgba(10, 25, 41, 0.15);
+            border-radius: 24px;
+            padding: 0.9rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin: 0.6rem 0 1.2rem;
+        }
+
+        .bulk-pill {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 0.9rem;
+            border-radius: 50px;
+            display: inline-flex;
+            gap: 0.5rem;
+            align-items: center;
+            font-weight: 600;
+            color: #0a1929;
+        }
+
+        .bulk-pill small {
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .btn:disabled,
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        th {
+            text-align: left;
+            padding: 1.2rem 1rem;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        td {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            color: #1e293b;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr.highlight-row {
+            background: rgba(220, 38, 38, 0.08);
+            border-left: 4px solid #dc2626;
+        }
+
+        .plate-cell {
+            font-weight: 700;
+            color: #0a1929;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .repeat-flag {
+            background: #dc2626;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .thumbnail {
+            width: 56px;
+            height: 40px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .thumbnail:hover {
+            border-color: #dc2626;
+            transform: scale(1.05);
+        }
+
+        .thumbnail i {
+            color: #94a3b8;
+            font-size: 1.2rem;
+        }
+
+        .action-select {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 40px;
+            padding: 0.5rem 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #0a1929;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .confidence-badge {
+            background: #e8f0fe;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #0a1929;
+        }
+
+        /* ======================================================
+        ANALYTICS PAGE
+        ====================================================== */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 32px;
+            padding: 1.8rem;
+            box-shadow: 0 20px 40px -15px rgba(10, 25, 41, 0.15);
+            border: 1px solid rgba(10, 25, 41, 0.06);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0a1929;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .chart-header i {
+            color: #dc2626;
+        }
+
+        /* Dashboard: live YOLO feed + video upload */
+        .dashboard-feature-card {
+            margin-bottom: 1.8rem;
+        }
+
+        .camera-feed-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.25rem;
+        }
+
+        .camera-feed-toolbar .btn-cam-start {
+            background: #16a34a;
+            color: white;
+            box-shadow: 0 8px 16px -8px #16a34a;
+        }
+
+        .camera-feed-toolbar .btn-cam-start:hover {
+            background: #15803d;
+            transform: translateY(-2px);
+        }
+
+        .camera-feed-toolbar .btn-cam-stop {
+            background: #dc2626;
+            color: white;
+            box-shadow: 0 8px 16px -8px #dc2626;
+        }
+
+        .camera-feed-toolbar .btn-cam-stop:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+        }
+
+        .cam-status-text {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-left: auto;
+        }
+
+        .camera-feed-frame {
+            background: #0a1929;
+            border-radius: 12px;
+            min-height: 280px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(10, 25, 41, 0.12);
+        }
+
+        .camera-feed-frame.is-live .camera-feed-placeholder {
+            display: none;
+        }
+
+        .camera-feed-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            color: #94a3b8;
+            font-size: 0.95rem;
+            text-align: center;
+            padding: 1.5rem;
+            pointer-events: none;
+        }
+
+        .camera-feed-placeholder i {
+            font-size: 2.5rem;
+            opacity: 0.55;
+        }
+
+        #cameraFeed {
+            width: 100%;
+            border-radius: 12px;
+            display: block;
+            min-height: 280px;
+            max-height: 520px;
+            object-fit: contain;
+            background: #0a1929;
+        }
+
+        .camera-feed-frame:not(.is-live) #cameraFeed {
+            display: none;
+        }
+
+        .upload-hint {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .upload-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .upload-file-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.55rem 0.85rem;
+            border: 2px dashed #e2e8f0;
+            border-radius: 16px;
+            background: #f8fafd;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .upload-status-box {
+            margin-top: 1.25rem;
+            padding: 1rem 1.25rem;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #f8fafd 0%, #f1f5f9 100%);
+            border: 1px solid rgba(10, 25, 41, 0.08);
+            font-weight: 600;
+            color: #0a1929;
+            line-height: 1.5;
+        }
+
+        .upload-status-box.is-error {
+            background: rgba(220, 38, 38, 0.08);
+            border-color: rgba(220, 38, 38, 0.2);
+            color: #b91c1c;
+        }
+
+        .upload-status-box.is-success {
+            background: rgba(22, 163, 74, 0.08);
+            border-color: rgba(22, 163, 74, 0.2);
+            color: #15803d;
+        }
+
+        .frequent-plates {
+            background: white;
+            border-radius: 32px;
+            padding: 1.8rem;
+            box-shadow: 0 20px 40px -15px rgba(10, 25, 41, 0.15);
+            border: 1px solid rgba(10, 25, 41, 0.06);
+        }
+
+        .plate-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.2rem;
+        }
+
+        .plate-tag {
+            background: #f1f5f9;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+        }
+
+        .plate-tag i {
+            color: #dc2626;
+        }
+
+        .plate-tag span {
+            background: #0a1929;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+        }
+
+        /* ======================================================
+        GALLERY PAGE
+        ====================================================== */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.8rem;
+        }
+
+        .gallery-item {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px -12px rgba(10, 25, 41, 0.15);
+            border: 1px solid rgba(10, 25, 41, 0.06);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 40px -15px #dc2626;
+        }
+
+        .gallery-image {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .gallery-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gallery-caption {
+            padding: 1rem;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .gallery-caption span:first-child {
+            font-weight: 600;
+            color: #0a1929;
+        }
+
+        .gallery-caption span:last-child {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .gallery-actions {
+            display: inline-flex;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        .mini-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            border: 1px solid rgba(10, 25, 41, 0.1);
+            background: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #0a1929;
+        }
+
+        .mini-btn:hover {
+            transform: translateY(-2px);
+            border-color: rgba(220, 38, 38, 0.35);
+            color: #dc2626;
+        }
+
+        /* ======================================================
+        ABOUT PAGE
+        ====================================================== */
+        .about-card {
+            background: white;
+            border-radius: 40px;
+            padding: 2.5rem;
+            box-shadow: 0 30px 60px -20px rgba(10, 25, 41, 0.2);
+        }
+
+        .flowchart {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 3rem 0;
+            padding: 2rem;
+            background: #f8fafd;
+            border-radius: 60px;
+        }
+
+        .flow-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .flow-step i {
+            width: 70px;
+            height: 70px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: #dc2626;
+            box-shadow: 0 15px 25px -10px rgba(220, 38, 38, 0.3);
+        }
+
+        .flow-arrow i {
+            color: #0a1929;
+            font-size: 1.8rem;
+            opacity: 0.4;
+        }
+
+        .team-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .team-member {
+            background: #f8fafd;
+            padding: 1.5rem;
+            border-radius: 24px;
+            text-align: center;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 1.5rem 0;
+        }
+
+        .tech-badge {
+            background: #eef2f6;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* ======================================================
+        MODAL
+        ====================================================== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 32px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        /* ======================================================
+        ALERT TOAST
+        ====================================================== */
+        .alert {
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            background: #dc2626;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 60px;
+            box-shadow: 0 20px 40px -10px #dc2626;
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1500;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+        }
+
+        .alert.show {
+            display: flex;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* ======================================================
+        RESPONSIVE DESIGN
+        ====================================================== */
+        @media (max-width: 1200px) {
+            .stat-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .camera-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding: 2rem;
+            }
+            
+            .hero p {
+                max-width: 100%;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .controls-bar {
+                border-radius: 30px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .stat-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Modern Navbar -->
+    <nav class="navbar">
+        <div class="logo-section">
+            <div class="logo-icon">
+                <i class="fas fa-shield-halved"></i>
+            </div>
+            <div class="logo-text">
+                <h2>Campus AI Secure</h2>
+                <span>MIT ADT </span>
+            </div>
+        </div>
+
+        <div class="location-badge">
+            <i class="fas fa-location-dot"></i>
+            Main Entry Gate · Live
+        </div>
+
+        <div class="nav-links">
+            <a class="nav-link active" onclick="showPage('home')">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a class="nav-link" onclick="showPage('dashboard')">
+                <i class="fas fa-gauge-high"></i> Dashboard
+            </a>
+            <a class="nav-link" onclick="showPage('analytics')">
+                <i class="fas fa-chart-simple"></i> Analytics
+            </a>
+            <a class="nav-link" onclick="showPage('gallery')">
+                <i class="fas fa-images"></i> Gallery
+            </a>
+            <a class="nav-link" onclick="showPage('about')">
+                <i class="fas fa-circle-info"></i> About
+            </a>
+        </div>
+
+        <button class="icon-btn" onclick="toggleNotifications(true)" aria-label="Open notifications">
+            <i class="fas fa-bell" style="color:#0a1929;"></i>
+            <span class="badge-dot" id="notifBadge" style="display:none;">0</span>
+        </button>
+
+        <div class="live-indicator">
+            <span class="status-dot" id="liveStatus"></span>
+            <span id="liveText">Camera Online</span>
+        </div>
+    </nav>
+
+    <!-- Alert Toast -->
+    <div class="alert" id="alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        New violation detected
+    </div>
+
+    <!-- Image Modal -->
+    <div class="modal" id="imageModal">
+        <span class="close-modal" onclick="document.getElementById('imageModal').classList.remove('active')">&times;</span>
+        <img class="modal-content" id="fullImage" src="" alt="Full violation image">
+    </div>
+
+    <!-- Notifications Drawer -->
+    <div class="drawer" id="notifDrawer" aria-hidden="true">
+        <div class="drawer-header">
+            <h3><i class="fas fa-bell" style="color:#dc2626;"></i> Notifications</h3>
+            <div style="display:flex; gap:0.6rem; align-items:center;">
+                <button class="btn btn-outline" style="padding:0.5rem 0.9rem;" onclick="markAllNotificationsRead()">
+                    <i class="fas fa-check-double"></i>
+                </button>
+                <button class="btn btn-outline" style="padding:0.5rem 0.9rem;" onclick="clearNotifications()">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <button class="btn btn-outline" style="padding:0.5rem 0.9rem;" onclick="toggleNotifications(false)" aria-label="Close notifications">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+        <div class="drawer-body" id="notifList"></div>
+        <div style="padding: 0.9rem 1.2rem; border-top: 1px solid rgba(10,25,41,0.08); display:flex; gap:0.8rem; align-items:center;">
+            <button class="btn btn-danger" style="padding:0.7rem 1.2rem;" onclick="addMockViolation()">
+                <i class="fas fa-plus"></i> Add 
+            </button>
+            <button class="btn btn-outline" style="padding:0.7rem 1.2rem; margin-left:auto;" onclick="showPage('gallery'); toggleNotifications(false);">
+                <i class="fas fa-images"></i> Open Gallery
+            </button>
+        </div>
+    </div>
+
+    <!-- HOME PAGE -->
+    <div id="home" class="container">
+        <div class="hero">
+            <div>
+                <h1>The Better way to <span>secure</span> your campus.</h1>
+                <p>AI-powered helmet violation detection system with real-time monitoring, automatic number plate recognition, and instant alerts for campus security.</p>
+                <div class="hero-buttons">
+                    <button class="primary-btn" onclick="showPage('dashboard')">
+                        <i class="fas fa-arrow-right"></i> Open Dashboard
+                    </button>
+                    <button class="secondary-btn" onclick="showPage('about')">
+                        <i class="fas fa-play"></i> How it Works
+                    </button>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="https://cdn-icons-png.flaticon.com/512/838/838907.png" alt="Security Illustration">
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div id="dashboard" class="container" style="display: none;">
+        <!-- Stat Cards -->
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <h3>Total Violations</h3>
+                    <i class="fas fa-triangle-exclamation"></i>
+                </div>
+                <div class="stat-value" id="totalViolations">0</div>
+                <div class="stat-trend">
+                    <i class="fas fa-arrow-up"></i> +12% from last week
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <h3>Repeat Offenders</h3>
+                    <i class="fas fa-rotate"></i>
+                </div>
+                <div class="stat-value" id="repeatOffenders">0</div>
+                <div class="stat-trend">
+                    <i class="fas fa-flag"></i> 3+ violations
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <h3>Today's Count</h3>
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+                <div class="stat-value" id="todayCount">0</div>
+                <div class="stat-trend">
+                    <i class="fas fa-clock"></i> Peak: 5:00 PM
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <h3>Camera Status</h3>
+                    <i class="fas fa-video"></i>
+                </div>
+                <div class="stat-value" id="cameraStatus">Online</div>
+                <div class="stat-trend">
+                    <i class="fas fa-check-circle"></i> 4 cameras active
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Camera Feed (Flask /video-feed) -->
+        <div class="chart-card dashboard-feature-card">
+            <div class="chart-header">
+                <h3><i class="fas fa-broadcast-tower"></i> Live Camera Feed - Main Entry Gate</h3>
+                <i class="fas fa-video" style="color: #dc2626;"></i>
+            </div>
+            <div class="camera-feed-frame" id="cameraFeedFrame">
+                <div class="camera-feed-placeholder" id="cameraFeedPlaceholder">
+                    <i class="fas fa-video-slash"></i>
+                    <span>Camera offline — press Start Camera to stream</span>
+                </div>
+                <img id="cameraFeed"
+                     alt="Live camera feed"
+                     style="width:100%; border-radius:12px;">
+            </div>
+            <div class="camera-feed-toolbar">
+                <button type="button" class="btn btn-cam-start" onclick="startCamera()">
+                    <i class="fas fa-play"></i> Start Camera
+                </button>
+                <button type="button" class="btn btn-cam-stop" onclick="stopCamera()">
+                    <i class="fas fa-stop"></i> Stop Camera
+                </button>
+                <span class="cam-status-text" id="camStatus" style="color: #dc2626;">Camera Offline</span>
+            </div>
+        </div>
+
+        <!-- Upload Video for Analysis -->
+        <div class="chart-card dashboard-feature-card">
+            <div class="chart-header">
+                <h3><i class="fas fa-file-video"></i> Upload Video for Analysis</h3>
+                <i class="fas fa-wand-magic-sparkles" style="color: #dc2626;"></i>
+            </div>
+            <p class="upload-hint">
+                <i class="fas fa-triangle-exclamation" style="color: #dc2626; margin-top: 0.15rem;"></i>
+                <span>Large videos may take longer to process</span>
+            </p>
+            <div class="upload-row">
+                <input type="file"
+                       id="videoUpload"
+                       class="upload-file-input"
+                       accept=".mp4,.avi,.mov,.mkv,video/mp4,video/x-msvideo,video/quicktime,video/x-matroska">
+                <button type="button" class="btn btn-danger" id="uploadBtn" onclick="uploadVideo()">
+                    <i class="fas fa-magnifying-glass-chart"></i> Analyse Video
+                </button>
+            </div>
+            <div id="uploadStatus" class="upload-status-box" style="display: none;"></div>
+            <div id="violationFrames" style="display:none; margin-top:1.5rem;"></div>
+        </div>
+
+        <!-- Camera Grid -->
+        <div class="camera-grid">
+            <div class="main-camera">
+                <div class="camera-header">
+                    <h3 id="mainCameraTitle"><i class="fas fa-video" style="color: #dc2626;"></i> Main Gate Live Feed</h3>
+                    <div style="display:flex; align-items:center; gap:0.6rem;">
+                        <button class="btn btn-outline" style="padding:0.5rem 1rem;" onclick="takeSnapshot()">
+                            <i class="fas fa-camera-retro"></i> Snapshot
+                        </button>
+                        <button class="btn btn-outline" style="padding:0.5rem 1rem;" onclick="downloadLastEvidence()" id="downloadEvidenceBtn" disabled>
+                            <i class="fas fa-file-arrow-down"></i> Evidence
+                        </button>
+                        <span class="rec-badge" id="mainCameraBadge">LIVE</span>
+                    </div>
+                </div>
+                <div class="camera-feed">
+                    <video id="mainCameraVideo" autoplay muted loop playsinline poster="https://images.pexels.com/photos/139384/pexels-photo-139384.jpeg?auto=compress&cs=tinysrgb&w=1200">
+                        <source id="mainCameraSource" src="https://cdn.coverr.co/videos/coverr-a-busy-crosstown-traffic-1575/1080p.mp4" type="video/mp4">
+                    </video>
+                    <div class="detection-overlay">
+                        <i class="fas fa-square"></i> Mock Feed · Detection Active
+                    </div>
+                </div>
+            </div>
+            <div class="camera-sidebar">
+                <h3 style="margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-list"></i> Camera Network
+                </h3>
+                <div class="camera-list">
+                    <div class="camera-item active" data-camera-id="mainGate" onclick="selectCamera('mainGate')">
+                        <div class="camera-icon"><i class="fas fa-camera"></i></div>
+                        <div class="camera-info">
+                            <h4>Main Gate</h4>
+                            <p>1280x720 · 30fps</p>
+                        </div>
+                        <span class="status-badge">Live</span>
+                    </div>
+                    <div class="camera-item" data-camera-id="hostelGate" onclick="selectCamera('hostelGate')">
+                        <div class="camera-icon"><i class="fas fa-camera"></i></div>
+                        <div class="camera-info">
+                            <h4>Hostel Gate</h4>
+                            <p>1280x720 · 30fps</p>
+                        </div>
+                        <span class="status-badge">Live</span>
+                    </div>
+                    <div class="camera-item" data-camera-id="parkingArea" onclick="selectCamera('parkingArea')">
+                        <div class="camera-icon"><i class="fas fa-camera"></i></div>
+                        <div class="camera-info">
+                            <h4>Parking Area</h4>
+                            <p>1920x1080 · 25fps</p>
+                        </div>
+                        <span class="status-badge">Live</span>
+                    </div>
+                    <div class="camera-item" data-camera-id="academicBlock" onclick="selectCamera('academicBlock')">
+                        <div class="camera-icon"><i class="fas fa-camera"></i></div>
+                        <div class="camera-info">
+                            <h4>Academic Block</h4>
+                            <p>1280x720 · 30fps</p>
+                        </div>
+                        <span class="status-badge" style="background: #ef4444;">Offline</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls Bar -->
+        <div class="controls-bar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchPlate" placeholder="Search by plate number..." onkeyup="filterViolations()">
+            </div>
+            
+            <div class="filter-group">
+                <i class="fas fa-calendar"></i>
+                <input type="date" id="dateFilter" onchange="filterViolations()">
+            </div>
+
+            <div class="chip-group">
+                <button class="chip" id="chipUnresolved" onclick="toggleQuickFilter('unresolved')">
+                    <i class="fas fa-circle-dot"></i> Unresolved
+                </button>
+                <button class="chip" id="chipEvidence" onclick="toggleQuickFilter('evidence')">
+                    <i class="fas fa-paperclip"></i> Evidence
+                </button>
+                <button class="chip" id="chipRepeat" onclick="toggleQuickFilter('repeat')">
+                    <i class="fas fa-flag"></i> Repeat
+                </button>
+            </div>
+
+            <button class="btn btn-danger" onclick="addMockViolation()">
+                <i class="fas fa-plus"></i> Add 
+            </button>
+
+            <button class="btn btn-outline" onclick="clearViolations()">
+                <i class="fas fa-trash"></i> Clear
+            </button>
+
+            <button class="btn btn-outline" onclick="exportCSV()">
+                <i class="fas fa-download"></i> Export
+            </button>
+
+            <div class="auto-refresh">
+                <span>Auto-refresh</span>
+                <div class="toggle-switch active" id="refreshToggle" onclick="toggleRefresh()"></div>
+            </div>
+
+            <div class="last-updated" id="lastUpdated">
+                <i class="fas fa-clock"></i> Updated: just now
+            </div>
+        </div>
+
+        <!-- Bulk Actions -->
+        <div class="bulk-bar">
+            <span class="bulk-pill"><i class="fas fa-layer-group" style="color:#dc2626;"></i> Selected: <small id="selectedCount">0</small></span>
+            <button class="btn btn-outline" onclick="resolveSelected()" id="resolveSelectedBtn" disabled>
+                <i class="fas fa-check"></i> Resolve Selected
+            </button>
+            <button class="btn btn-outline" onclick="reopenSelected()" id="reopenSelectedBtn" disabled>
+                <i class="fas fa-rotate-left"></i> Reopen Selected
+            </button>
+            <button class="btn btn-outline" onclick="deleteSelected()" id="deleteSelectedBtn" disabled>
+                <i class="fas fa-trash"></i> Delete Selected
+            </button>
+            <button class="btn btn-outline" onclick="exportSelectedCSV()" id="exportSelectedBtn" disabled>
+                <i class="fas fa-file-csv"></i> Export Selected
+            </button>
+            <button class="btn btn-outline" onclick="clearSelection()" id="clearSelectionBtn" disabled style="margin-left:auto;">
+                <i class="fas fa-xmark"></i> Clear Selection
+            </button>
+        </div>
+
+        <!-- Violations Table -->
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">
+                            <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this.checked)">
+                        </th>
+                        <th>Timestamp</th>
+                        <th>Plate Number</th>
+                        <th>Confidence</th>
+                        <th>Image</th>
+                        <th>Action Taken</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ANALYTICS PAGE -->
+    <div id="analytics" class="container" style="display: none;">
+        <div class="analytics-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3><i class="fas fa-chart-bar"></i> Violations per Hour</h3>
+                    <i class="fas fa-clock"></i>
+                </div>
+                <canvas id="hourlyChart" style="max-height: 250px;"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3><i class="fas fa-chart-line"></i> Violations per Day</h3>
+                    <i class="fas fa-calendar"></i>
+                </div>
+                <canvas id="dailyChart" style="max-height: 250px;"></canvas>
+            </div>
+        </div>
+
+        <div class="frequent-plates">
+            <div class="chart-header">
+                <h3><i class="fas fa-ranking-star"></i> Most Frequent Plates</h3>
+                <i class="fas fa-rotate"></i>
+            </div>
+            <div class="plate-tags" id="frequentPlatesList">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- GALLERY PAGE -->
+    <div id="gallery" class="container" style="display: none;">
+        <div class="controls-bar" style="border-radius: 40px;">
+            <div class="search-box" style="flex: 2; min-width: 240px;">
+                <i class="fas fa-magnifying-glass"></i>
+                <input type="text" id="gallerySearch" placeholder="Search plate in gallery..." onkeyup="updateGallery()">
+            </div>
+            <div class="filter-group">
+                <i class="fas fa-calendar"></i>
+                <input type="date" id="galleryDateFilter">
+            </div>
+            <div class="filter-group">
+                <i class="fas fa-sort"></i>
+                <select id="gallerySort" class="action-select" onchange="updateGallery()" style="background:transparent; border:none; padding:0.5rem 0;">
+                    <option value="newest">Newest</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="confidence">Confidence</option>
+                </select>
+            </div>
+            <button class="btn btn-outline" onclick="filterGallery()">
+                <i class="fas fa-filter"></i> Apply Filter
+            </button>
+            <button class="btn btn-outline" onclick="downloadVisibleGalleryEvidence()">
+                <i class="fas fa-download"></i> Download Visible
+            </button>
+            <span style="color: #64748b; margin-left: auto;">
+                <i class="fas fa-images"></i> Click image to enlarge
+            </span>
+        </div>
+
+        <div class="gallery-grid" id="galleryGrid">
+            <!-- Will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- ABOUT PAGE -->
+    <div id="about" class="container" style="display: none;">
+        <div class="about-card">
+            <h1 style="color: #0a1929; margin-bottom: 1.5rem;">📡 Smart Campus Helmet Violation Detection</h1>
+            <p style="color: #475569; font-size: 1.1rem; margin-bottom: 2.5rem;">
+                An AI-powered surveillance system that automatically detects helmetless riders at campus entry points, 
+                captures license plates, and maintains a violation database for security enforcement.
+            </p>
+
+            <h2 style="color: #0a1929; margin-bottom: 1.5rem;">⚙️ How It Works</h2>
+            <div class="flowchart">
+                <div class="flow-step">
+                    <i class="fas fa-video"></i>
+                    <span>Live Feed</span>
+                </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-step">
+                    <i class="fas fa-brain"></i>
+                    <span>AI Detection</span>
+                </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-step">
+                    <i class="fas fa-text"></i>
+                    <span>Plate OCR</span>
+                </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-step">
+                    <i class="fas fa-database"></i>
+                    <span>Log Violation</span>
+                </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-step">
+                    <i class="fas fa-bell"></i>
+                    <span>Alert Security</span>
+                </div>
+            </div>
+
+            <h2 style="color: #0a1929; margin: 2.5rem 0 1.5rem;">👥 Development Team</h2>
+            <div class="team-section">
+                <div class="team-member">
+                    <i class="fas fa-user-circle" style="font-size: 3rem; color: #0a1929; margin-bottom: 1rem;"></i>
+                    <h3>Khushi Bhadangkar.</h3>
+                    <p style="color: #64748b;">Frontend Developer</p>
+                </div>
+                <div class="team-member">
+                    <i class="fas fa-user-circle" style="font-size: 3rem; color: #0a1929; margin-bottom: 1rem;"></i>
+                    <h3>Tanmay Kshirsagar</h3>
+                    <p style="color: #64748b;">AI,ML Developer</p>
+                </div>
+                <div class="team-member">
+                    <i class="fas fa-user-circle" style="font-size: 3rem; color: #0a1929; margin-bottom: 1rem;"></i>
+                    <h3>Atharva Borate.</h3>
+                    <p style="color: #64748b;">Backend Developer</p>
+                </div>
+                <div class="team-member">
+                    <i class="fas fa-user-circle" style="font-size: 3rem; color: #0a1929; margin-bottom: 1rem;"></i>
+                    <h3>Anushri Ghosh</h3>
+                    <p style="color: #64748b;">Researcher</p>
+                </div>
+            </div>
+
+            <h2 style="color: #0a1929; margin: 2.5rem 0 1.5rem;">🛠️ Technology Stack</h2>
+            <div class="tech-stack">
+                <span class="tech-badge">Python</span>
+                <span class="tech-badge">YOLOv8</span>
+                <span class="tech-badge">OpenCV</span>
+                <span class="tech-badge">EasyOCR</span>
+                <span class="tech-badge">Flask</span>
+                <span class="tech-badge">React</span>
+                <span class="tech-badge">Chart.js</span>
+                <span class="tech-badge">SQLite</span>
+                <span class="tech-badge">TensorFlow</span>
+                <span class="tech-badge">REST API</span>
+            </div>
+
+            <p style="margin-top: 2.5rem; padding: 1rem; background: #f1f5f9; border-radius: 50px; display: inline-block;">
+                <i class="fab fa-github" style="color: #0a1929;"></i> 
+                <a href="https://github.com/Tanmayy-k/helmet-violation-detection" style="color: #0a1929; text-decoration: none; font-weight: 500;">GitHub Repository</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // ======================================================
+        // DATABASE - Local Storage + API (Flask)
+        // ======================================================
+        let apiViolations = null;
+
+        function getViolations() {
+            if (apiViolations !== null) return apiViolations;
+            return JSON.parse(localStorage.getItem('violations') || '[]');
+        }
+
+        function saveViolations(data) {
+            if (apiViolations !== null) {
+                apiViolations = data;
+                return;
+            }
+            localStorage.setItem('violations', JSON.stringify(data));
+        }
+
+        function mapApiConfidence(confStr) {
+            if (confStr === 'N/A' || confStr == null || String(confStr).trim() === '') return 0;
+            const n = parseFloat(String(confStr).replace('%', '').trim());
+            if (!Number.isFinite(n)) return 0;
+            return n <= 1 ? Math.round(n * 100) : Math.round(n);
+        }
+
+        function normalizeApiTimestamp(ts) {
+            if (!ts) return new Date().toISOString();
+            const s = String(ts).trim();
+            return s.includes('T') ? s : s.replace(' ', 'T');
+        }
+
+        async function fetchViolations() {
+            try {
+                const res = await fetch(`/api/violations?ts=${Date.now()}`, { cache: 'no-store' });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                apiViolations = data.map((v, i) => {
+                    const normalizedPath = String(v.image_path || '').trim();
+                    const imageUrl = normalizedPath
+                        ? (normalizedPath.startsWith('http') ? normalizedPath : normalizedPath)
+                        : null;
+                    return {
+                        id: `srv_${String(v.timestamp || i).replace(/[^a-zA-Z0-9_-]/g, '_')}_${i}`,
+                        plate: String(v.plate_text || 'PLATE NOT DETECTED').trim(),
+                        confidence: mapApiConfidence(v.confidence),
+                        timestamp: normalizeApiTimestamp(v.timestamp),
+                        imageUrl: imageUrl,
+                        action: 'Warning',
+                        resolved: false
+                    };
+                });
+                renderTable();
+                updateGallery();
+                const lu = document.getElementById('lastUpdated');
+                if (lu) lu.innerHTML = `<i class="fas fa-clock"></i> Updated: ${new Date().toLocaleTimeString()}`;
+            } catch (e) {
+                console.error('fetchViolations:', e);
+                renderTable();
+                updateGallery();
+            }
+        }
+
+        // ======================================================
+        // MOCK DATA GENERATION - Realistic Indian Plates
+        // ======================================================
+        const states = ['MH', 'DL', 'KA', 'TN', 'GJ', 'UP', 'WB', 'RJ', 'MP', 'AP'];
+        const alphabets = ['AB', 'CD', 'EF', 'GH', 'IJ', 'KL', 'MN', 'OP', 'QR', 'ST', 'UV', 'WX', 'YZ'];
+        
+        function generateRandomPlate() {
+            const state = states[Math.floor(Math.random() * states.length)];
+            const district = Math.floor(Math.random() * 90 + 10).toString();
+            const alpha = alphabets[Math.floor(Math.random() * alphabets.length)];
+            const number = Math.floor(Math.random() * 9000 + 1000).toString();
+            return `${state}${district}${alpha}${number}`;
+        }
+
+        // ======================================================
+        // CAMERA MOCK SOURCES
+        // ======================================================
+        const cameraCatalog = {
+            mainGate: {
+                name: 'Main Gate',
+                resolution: '1280x720 · 30fps',
+                status: 'live',
+                videoSrc: 'https://cdn.coverr.co/videos/coverr-a-busy-crosstown-traffic-1575/1080p.mp4',
+                poster: 'https://images.pexels.com/photos/139384/pexels-photo-139384.jpeg?auto=compress&cs=tinysrgb&w=1200'
+            },
+            hostelGate: {
+                name: 'Hostel Gate',
+                resolution: '1280x720 · 30fps',
+                status: 'live',
+                videoSrc: 'https://cdn.coverr.co/videos/coverr-motorbikes-on-the-road-4407/1080p.mp4',
+                poster: 'https://images.pexels.com/photos/210182/pexels-photo-210182.jpeg?auto=compress&cs=tinysrgb&w=1200'
+            },
+            parkingArea: {
+                name: 'Parking Area',
+                resolution: '1920x1080 · 25fps',
+                status: 'live',
+                videoSrc: 'https://cdn.coverr.co/videos/coverr-traffic-in-a-big-city-8744/1080p.mp4',
+                poster: 'https://images.pexels.com/photos/1004409/pexels-photo-1004409.jpeg?auto=compress&cs=tinysrgb&w=1200'
+            },
+            academicBlock: {
+                name: 'Academic Block',
+                resolution: '1280x720 · 30fps',
+                status: 'offline',
+                videoSrc: 'https://cdn.coverr.co/videos/coverr-a-busy-crosstown-traffic-1575/1080p.mp4',
+                poster: 'https://images.pexels.com/photos/116675/pexels-photo-116675.jpeg?auto=compress&cs=tinysrgb&w=1200'
+            }
+        };
+
+        // ======================================================
+        // LIVE CAMERA (Flask) + VIDEO UPLOAD
+        // ======================================================
+        async function startCamera() {
+            const res = await fetch('http://127.0.0.1:5000/api/camera/start',
+                { method: 'POST' });
+            const data = await res.json();
+            if (data.success) {
+                const feed = document.getElementById('cameraFeed');
+                const frame = document.getElementById('cameraFeedFrame');
+                if (feed) {
+                    feed.src = 'http://127.0.0.1:5000/video-feed?' + Date.now();
+                }
+                if (frame) frame.classList.add('is-live');
+                document.getElementById('camStatus').textContent = 'Camera Online';
+                document.getElementById('camStatus').style.color = 'green';
+            } else {
+                alert('Could not start camera: ' + (data.error || 'Unknown error'));
+            }
+        }
+
+        async function stopCamera() {
+            await fetch('http://127.0.0.1:5000/api/camera/stop', { method: 'POST' });
+            const feed = document.getElementById('cameraFeed');
+            const frame = document.getElementById('cameraFeedFrame');
+            if (feed) {
+                feed.removeAttribute('src');
+            }
+            if (frame) frame.classList.remove('is-live');
+            document.getElementById('camStatus').textContent = 'Camera Offline';
+            document.getElementById('camStatus').style.color = 'red';
+        }
+
+        async function uploadVideo() {
+            const fileInput = document.getElementById('videoUpload');
+            const statusDiv = document.getElementById('uploadStatus');
+            const btn = document.getElementById('uploadBtn');
+            const violationFramesDiv = document.getElementById('violationFrames');
+
+            if (!fileInput.files[0]) {
+                alert('Please select a video file first');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('video', fileInput.files[0]);
+
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+            statusDiv.style.display = 'block';
+            statusDiv.textContent = 'Processing video, please wait...';
+            statusDiv.classList.remove('is-error', 'is-success');
+            if (violationFramesDiv) {
+                violationFramesDiv.style.display = 'none';
+                violationFramesDiv.innerHTML = '';
+            }
+
+            try {
+                const res = await fetch('http://127.0.0.1:5000/api/upload-video', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await res.json();
+
+                if (result.error) {
+                    statusDiv.textContent = 'Error: ' + result.error;
+                    statusDiv.classList.add('is-error');
+                } else {
+                    statusDiv.textContent =
+                        'Done! Found ' + result.violations_found + ' violation(s)!';
+                    statusDiv.classList.add('is-success');
+
+                    if (violationFramesDiv) {
+                        if (result.violation_frames && result.violation_frames.length > 0) {
+                            const framesHtml = result.violation_frames.map(frame => `
+                                <div style="background:#1a1a2e; border-radius:12px; 
+                                            padding:10px; border: 2px solid #dc2626;">
+                                    <img src="data:image/jpeg;base64,${frame.image_base64}" 
+                                         style="width:100%; border-radius:8px;">
+                                    <div style="color:white; margin-top:8px; font-size:0.85rem;">
+                                        <strong style="color:#dc2626;">
+                                            🚨 ${frame.plate_text}
+                                        </strong><br>
+                                        <span style="color:#aaa;">${frame.timestamp}</span>
+                                    </div>
+                                </div>
+                            `).join('');
+
+                            violationFramesDiv.innerHTML = `
+                                <h3 style="color:#dc2626; margin-bottom:1rem;">
+                                    🚨 ${result.violations_found} Violation(s) Detected
+                                </h3>
+                                <div style="display:grid; grid-template-columns: 
+                                            repeat(auto-fill, minmax(250px, 1fr)); gap:1rem;">
+                                    ${framesHtml}
+                                </div>
+                            `;
+                            violationFramesDiv.style.display = 'block';
+                        } else {
+                            violationFramesDiv.innerHTML =
+                                '<p style="color:#16a34a;">✅ No violations found in video</p>';
+                            violationFramesDiv.style.display = 'block';
+                        }
+                    }
+                }
+            } catch (err) {
+                statusDiv.textContent = 'Failed to process video';
+                statusDiv.classList.add('is-error');
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Analyse Video';
+        }
+
+        let selectedCameraId = 'mainGate';
+
+        function selectCamera(cameraId) {
+            const cam = cameraCatalog[cameraId];
+            if (!cam) return;
+
+            selectedCameraId = cameraId;
+
+            // UI: highlight selected camera item
+            document.querySelectorAll('.camera-item').forEach(el => {
+                el.classList.toggle('active', el.dataset.cameraId === cameraId);
+            });
+
+            // UI: update header title and badge
+            const title = document.getElementById('mainCameraTitle');
+            if (title) title.innerHTML = `<i class="fas fa-video" style="color: #dc2626;"></i> ${cam.name} Live Feed`;
+
+            const badge = document.getElementById('mainCameraBadge');
+            if (badge) badge.textContent = cam.status === 'offline' ? 'OFFLINE' : 'LIVE';
+            if (badge) badge.style.background = cam.status === 'offline' ? '#ef4444' : '#dc2626';
+
+            // Update video source/poster
+            const video = document.getElementById('mainCameraVideo');
+            const source = document.getElementById('mainCameraSource');
+            if (!video || !source) return;
+
+            video.setAttribute('poster', cam.poster);
+            source.setAttribute('src', cam.videoSrc);
+            video.load();
+
+            if (cam.status === 'offline') {
+                video.pause();
+                showAlert(`${cam.name} is offline (mock)`);
+            } else {
+                video.play().catch(() => {});
+                showAlert(`Switched to ${cam.name}`);
+            }
+        }
+
+        let lastEvidenceDataUrl = null;
+        let lastEvidenceMeta = null;
+        const selectedViolationIds = new Set();
+        const quickFilters = {
+            unresolved: false,
+            evidence: false,
+            repeat: false
+        };
+
+        // Pre-populate with realistic data if empty
+        if (getViolations().length === 0) {
+            let mockData = [];
+            for (let i = 0; i < 25; i++) {
+                const date = new Date();
+                date.setHours(date.getHours() - Math.floor(Math.random() * 72));
+                date.setMinutes(Math.floor(Math.random() * 60));
+                
+                mockData.push({
+                    id: Date.now() + i,
+                    plate: generateRandomPlate(),
+                    confidence: Math.floor(Math.random() * 15 + 85), // 85-99%
+                    timestamp: date.toISOString(),
+                    action: ['Warning', 'Notice', 'Fine'][Math.floor(Math.random() * 3)],
+                    imageUrl: null,
+                    resolved: false
+                });
+            }
+            // Sort by newest first
+            mockData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            saveViolations(mockData);
+        }
+
+        // ======================================================
+        // RENDER FUNCTIONS
+        // ======================================================
+        function formatDate(isoString) {
+            const d = new Date(isoString);
+            return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function timeAgo(isoString) {
+            const seconds = Math.floor((new Date() - new Date(isoString)) / 1000);
+            if (seconds < 60) return seconds + ' sec ago';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return minutes + ' min ago';
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return hours + ' hours ago';
+            return new Date(isoString).toLocaleDateString();
+        }
+
+        function renderTable() {
+            let data = getViolations();
+            const searchTerm = document.getElementById('searchPlate')?.value.toLowerCase() || '';
+            const dateFilter = document.getElementById('dateFilter')?.value || '';
+
+            // Apply filters
+            let filtered = data;
+            if (searchTerm) {
+                filtered = filtered.filter(v => v.plate.toLowerCase().includes(searchTerm));
+            }
+            if (dateFilter) {
+                filtered = filtered.filter(v => new Date(v.timestamp).toDateString() === new Date(dateFilter).toDateString());
+            }
+
+            // Repeat offender counts (needed for chip filters + labels)
+            const plateCount = {};
+            data.forEach(v => plateCount[v.plate] = (plateCount[v.plate] || 0) + 1);
+
+            if (quickFilters.unresolved) {
+                filtered = filtered.filter(v => !v.resolved);
+            }
+            if (quickFilters.evidence) {
+                filtered = filtered.filter(v => !!v.imageUrl);
+            }
+            if (quickFilters.repeat) {
+                filtered = filtered.filter(v => (plateCount[v.plate] || 0) >= 3);
+            }
+
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            filtered.forEach((v, index) => {
+                const row = document.createElement('tr');
+                if (index === 0) row.classList.add('highlight-row');
+                
+                const isRepeat = plateCount[v.plate] >= 3;
+                
+                row.innerHTML = `
+                    <td>
+                        <input type="checkbox" data-vid="${v.id}" ${selectedViolationIds.has(String(v.id)) ? 'checked' : ''} onchange="toggleSelect('${v.id}', this.checked)">
+                    </td>
+                    <td>${formatDate(v.timestamp)}<br><small style="color:#64748b;">${timeAgo(v.timestamp)}</small></td>
+                    <td>
+                        <div class="plate-cell">
+                            ${v.plate}
+                            ${isRepeat ? '<span class="repeat-flag"><i class="fas fa-flag"></i> REPEAT</span>' : ''}
+                        </div>
+                    </td>
+                    <td><span class="confidence-badge">${v.confidence}%</span></td>
+                    <td>
+                        <div class="thumbnail" onclick="openImage('${v.id}')">
+                            ${v.imageUrl ? `<img src="${v.imageUrl}" alt="Evidence for ${v.plate}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">` : '<i class="fas fa-image"></i>'}
+                        </div>
+                    </td>
+                    <td>
+                        <select class="action-select" onchange="updateAction(${v.id}, this.value)">
+                            <option value="Warning" ${v.action === 'Warning' ? 'selected' : ''}>Warning</option>
+                            <option value="Notice" ${v.action === 'Notice' ? 'selected' : ''}>Notice</option>
+                            <option value="Fine" ${v.action === 'Fine' ? 'selected' : ''}>Fine</option>
+                        </select>
+                    </td>
+                    <td>
+                        ${v.resolved ? '✅ Resolved' : (isRepeat ? '🔁 Repeat Offender' : 'First Offense')}
+                        <div style="margin-top:0.4rem; display:flex; gap:0.4rem; flex-wrap:wrap;">
+                            <button class="btn btn-outline" style="padding:0.35rem 0.7rem; font-size:0.8rem;" onclick="toggleResolved(${v.id})">
+                                <i class="fas ${v.resolved ? 'fa-rotate-left' : 'fa-check'}"></i> ${v.resolved ? 'Reopen' : 'Resolve'}
+                            </button>
+                            <button class="btn btn-outline" style="padding:0.35rem 0.7rem; font-size:0.8rem;" onclick="downloadEvidence(${v.id})" ${v.imageUrl ? '' : 'disabled'}>
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Update stat cards
+            updateStats(data);
+            syncSelectionUI();
+        }
+
+        function updateStats(data) {
+            document.getElementById('totalViolations').textContent = data.length;
+            
+            const plateCount = {};
+            data.forEach(v => plateCount[v.plate] = (plateCount[v.plate] || 0) + 1);
+            const repeaters = Object.values(plateCount).filter(c => c >= 3).length;
+            document.getElementById('repeatOffenders').textContent = repeaters;
+            
+            const today = new Date().toDateString();
+            const todayCount = data.filter(v => new Date(v.timestamp).toDateString() === today).length;
+            document.getElementById('todayCount').textContent = todayCount;
+        }
+
+        // ======================================================
+        // ACTION HANDLERS
+        // ======================================================
+        function addMockViolation() {
+            let data = getViolations();
+            data.unshift({
+                id: Date.now(),
+                plate: generateRandomPlate(),
+                confidence: Math.floor(Math.random() * 15 + 85),
+                timestamp: new Date().toISOString(),
+                action: 'Warning',
+                imageUrl: null,
+                resolved: false
+            });
+            saveViolations(data);
+            renderTable();
+            updateGallery();
+            showAlert('New violation recorded');
+        }
+
+        function clearViolations() {
+            if (confirm('Clear all violation data? This cannot be undone.')) {
+                if (apiViolations !== null) {
+                    apiViolations = [];
+                } else {
+                    localStorage.removeItem('violations');
+                }
+                renderTable();
+                updateGallery();
+                showAlert('All violations cleared');
+            }
+        }
+
+        function updateAction(id, action) {
+            let data = getViolations();
+            const violation = data.find(v => v.id == id);
+            if (violation) {
+                violation.action = action;
+                saveViolations(data);
+                showAlert(`Action updated to ${action}`);
+            }
+        }
+
+        function toggleResolved(id) {
+            let data = getViolations();
+            const violation = data.find(v => v.id == id);
+            if (!violation) return;
+            violation.resolved = !violation.resolved;
+            saveViolations(data);
+            renderTable();
+            updateGallery();
+            showAlert(violation.resolved ? 'Marked as resolved' : 'Reopened case');
+        }
+
+        function takeSnapshot() {
+            const cam = cameraCatalog[selectedCameraId];
+            if (!cam) return;
+            if (cam.status === 'offline') {
+                showAlert('Cannot snapshot: camera offline');
+                return;
+            }
+
+            const video = document.getElementById('mainCameraVideo');
+            if (!video) return;
+
+            const w = Math.max(640, video.videoWidth || 1280);
+            const h = Math.max(360, video.videoHeight || 720);
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+
+            // Draw current frame
+            try {
+                ctx.drawImage(video, 0, 0, w, h);
+            } catch (e) {
+                showAlert('Snapshot blocked by browser (video CORS). Try another feed.');
+                return;
+            }
+
+            // Watermark: camera + time (lightweight, readable)
+            const stamp = `${cam.name} · ${new Date().toLocaleString()}`;
+            ctx.font = '600 18px Inter, sans-serif';
+            const stampWidth = ctx.measureText(stamp).width;
+            ctx.fillStyle = 'rgba(0,0,0,0.55)';
+            ctx.fillRect(20, h - 64, stampWidth + 40, 44);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText(stamp, 40, h - 35);
+
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+            lastEvidenceDataUrl = dataUrl;
+            lastEvidenceMeta = { cameraId: selectedCameraId, cameraName: cam.name, capturedAt: new Date().toISOString() };
+
+            // Create a violation entry with attached evidence
+            let data = getViolations();
+            data.unshift({
+                id: Date.now(),
+                plate: generateRandomPlate(),
+                confidence: Math.floor(Math.random() * 8 + 92), // 92-99%
+                timestamp: new Date().toISOString(),
+                action: 'Warning',
+                imageUrl: dataUrl,
+                resolved: false
+            });
+            saveViolations(data);
+
+            // Enable evidence download button
+            const btn = document.getElementById('downloadEvidenceBtn');
+            if (btn) btn.disabled = false;
+
+            renderTable();
+            updateGallery();
+            showAlert('Snapshot captured and logged');
+        }
+
+        function downloadDataUrl(dataUrl, filename) {
+            const a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        }
+
+        function downloadLastEvidence() {
+            if (!lastEvidenceDataUrl) {
+                showAlert('No evidence captured yet');
+                return;
+            }
+            const name = (lastEvidenceMeta?.cameraName || 'camera').replace(/\s+/g, '_').toLowerCase();
+            downloadDataUrl(lastEvidenceDataUrl, `evidence_${name}_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.jpg`);
+            showAlert('Evidence downloaded');
+        }
+
+        function downloadEvidence(id) {
+            const data = getViolations();
+            const v = data.find(x => String(x.id) === String(id));
+            if (!v || !v.imageUrl) {
+                showAlert('No evidence available for this record');
+                return;
+            }
+            downloadDataUrl(v.imageUrl, `violation_${v.plate}_${new Date(v.timestamp).toISOString().slice(0,19).replace(/[:T]/g,'-')}.jpg`);
+            showAlert('Evidence downloaded');
+        }
+
+        function filterViolations() {
+            renderTable();
+        }
+
+        function toggleQuickFilter(key) {
+            if (!(key in quickFilters)) return;
+            quickFilters[key] = !quickFilters[key];
+            const map = {
+                unresolved: 'chipUnresolved',
+                evidence: 'chipEvidence',
+                repeat: 'chipRepeat'
+            };
+            const el = document.getElementById(map[key]);
+            if (el) el.classList.toggle('active', quickFilters[key]);
+            renderTable();
+            showAlert(`${key.charAt(0).toUpperCase() + key.slice(1)} filter ${quickFilters[key] ? 'enabled' : 'disabled'}`);
+        }
+
+        function syncSelectionUI() {
+            const count = selectedViolationIds.size;
+            const selectedCount = document.getElementById('selectedCount');
+            if (selectedCount) selectedCount.textContent = String(count);
+
+            const disabled = count === 0;
+            ['resolveSelectedBtn', 'reopenSelectedBtn', 'deleteSelectedBtn', 'exportSelectedBtn', 'clearSelectionBtn'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.disabled = disabled;
+            });
+
+            // Update "select all" checkbox based on currently visible rows
+            const selectAll = document.getElementById('selectAll');
+            const visibleChecks = Array.from(document.querySelectorAll('#tableBody input[type="checkbox"]'));
+            if (selectAll && visibleChecks.length) {
+                selectAll.checked = visibleChecks.every(chk => chk.checked);
+                selectAll.indeterminate = !selectAll.checked && visibleChecks.some(chk => chk.checked);
+            } else if (selectAll) {
+                selectAll.checked = false;
+                selectAll.indeterminate = false;
+            }
+        }
+
+        function toggleSelect(id, checked) {
+            if (checked) selectedViolationIds.add(String(id));
+            else selectedViolationIds.delete(String(id));
+            syncSelectionUI();
+        }
+
+        function toggleSelectAll(checked) {
+            const visibleChecks = Array.from(document.querySelectorAll('#tableBody input[type="checkbox"]'));
+            visibleChecks.forEach(chk => {
+                chk.checked = checked;
+                const id = chk.dataset.vid;
+                if (!id) return;
+                if (checked) selectedViolationIds.add(String(id));
+                else selectedViolationIds.delete(String(id));
+            });
+            syncSelectionUI();
+        }
+
+        function clearSelection() {
+            selectedViolationIds.clear();
+            renderTable();
+            showAlert('Selection cleared');
+        }
+
+        function resolveSelected() {
+            let data = getViolations();
+            const ids = new Set(Array.from(selectedViolationIds));
+            let changed = 0;
+            data.forEach(v => {
+                if (ids.has(String(v.id)) && !v.resolved) {
+                    v.resolved = true;
+                    changed++;
+                }
+            });
+            saveViolations(data);
+            renderTable();
+            updateGallery();
+            showAlert(changed ? `Resolved ${changed} case(s)` : 'Nothing to resolve');
+        }
+
+        function reopenSelected() {
+            let data = getViolations();
+            const ids = new Set(Array.from(selectedViolationIds));
+            let changed = 0;
+            data.forEach(v => {
+                if (ids.has(String(v.id)) && v.resolved) {
+                    v.resolved = false;
+                    changed++;
+                }
+            });
+            saveViolations(data);
+            renderTable();
+            updateGallery();
+            showAlert(changed ? `Reopened ${changed} case(s)` : 'Nothing to reopen');
+        }
+
+        function deleteSelected() {
+            if (!confirm('Delete selected violation records? This cannot be undone.')) return;
+            const ids = new Set(Array.from(selectedViolationIds));
+            let data = getViolations();
+            const before = data.length;
+            data = data.filter(v => !ids.has(String(v.id)));
+            saveViolations(data);
+            selectedViolationIds.clear();
+            renderTable();
+            updateGallery();
+            showAlert(`Deleted ${before - data.length} record(s)`);
+        }
+
+        function exportSelectedCSV() {
+            const ids = new Set(Array.from(selectedViolationIds));
+            const data = getViolations().filter(v => ids.has(String(v.id)));
+            if (!data.length) {
+                showAlert('No selected records to export');
+                return;
+            }
+            let csv = 'Timestamp,Plate Number,Confidence,Action,Resolved\n';
+            data.forEach(v => {
+                csv += `${v.timestamp},${v.plate},${v.confidence}%,${v.action},${v.resolved ? 'Yes' : 'No'}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `selected_violations_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            showAlert('Selected CSV exported');
+        }
+
+        // ======================================================
+        // GALLERY FUNCTIONS
+        // ======================================================
+        function updateGallery() {
+            const data = getViolations();
+            const gallery = document.getElementById('galleryGrid');
+            if (!gallery) return;
+            const dateFilter = document.getElementById('galleryDateFilter')?.value || '';
+            const searchTerm = (document.getElementById('gallerySearch')?.value || '').trim().toLowerCase();
+            const sortMode = document.getElementById('gallerySort')?.value || 'newest';
+
+            let filtered = data;
+            if (dateFilter) {
+                filtered = filtered.filter(v => new Date(v.timestamp).toDateString() === new Date(dateFilter).toDateString());
+            }
+            if (searchTerm) {
+                filtered = filtered.filter(v => (v.plate || '').toLowerCase().includes(searchTerm));
+            }
+
+            if (sortMode === 'oldest') {
+                filtered = [...filtered].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            } else if (sortMode === 'confidence') {
+                filtered = [...filtered].sort((a, b) => (b.confidence || 0) - (a.confidence || 0));
+            } else {
+                filtered = [...filtered].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            }
+
+            gallery.innerHTML = filtered.map(v => {
+                return `
+                <div class="gallery-item" onclick="openImage('${v.id}')">
+                    <div class="gallery-image">
+                        ${v.imageUrl
+                            ? `<img src="${v.imageUrl}" alt="Violation frame for ${v.plate}" loading="lazy">`
+                            : '<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#64748b;"><i class="fas fa-image"></i></div>'}
+                    </div>
+                    <div class="gallery-caption">
+                        <span>${v.plate}</span>
+                        <div class="gallery-actions">
+                            <button class="mini-btn" onclick="event.stopPropagation(); copyPlate('${v.plate}')" title="Copy plate">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="mini-btn" onclick="event.stopPropagation(); downloadGalleryImage('${v.id}')" title="Download image">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                        <span>${new Date(v.timestamp).toLocaleDateString()}</span>
+                    </div>
+                </div>
+            `;
+            }).join('');
+        }
+
+        function filterGallery() {
+            updateGallery();
+        }
+
+        function copyPlate(plate) {
+            if (!plate) return;
+            const text = String(plate);
+            if (navigator.clipboard?.writeText) {
+                navigator.clipboard.writeText(text).then(() => showAlert(`Copied ${text}`)).catch(() => showAlert('Copy failed'));
+            } else {
+                // Fallback
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                try { document.execCommand('copy'); showAlert(`Copied ${text}`); } catch { showAlert('Copy failed'); }
+                ta.remove();
+            }
+        }
+
+        function downloadGalleryImage(id) {
+            const data = getViolations();
+            const v = data.find(x => String(x.id) === String(id));
+            if (!v) return;
+            if (v.imageUrl) {
+                downloadEvidence(v.id);
+                return;
+            }
+            showAlert('No image evidence available for this record');
+        }
+
+        function downloadVisibleGalleryEvidence() {
+            const dateFilter = document.getElementById('galleryDateFilter')?.value || '';
+            const searchTerm = (document.getElementById('gallerySearch')?.value || '').trim().toLowerCase();
+            const sortMode = document.getElementById('gallerySort')?.value || 'newest';
+
+            let filtered = getViolations();
+            if (dateFilter) {
+                filtered = filtered.filter(v => new Date(v.timestamp).toDateString() === new Date(dateFilter).toDateString());
+            }
+            if (searchTerm) {
+                filtered = filtered.filter(v => (v.plate || '').toLowerCase().includes(searchTerm));
+            }
+            if (sortMode === 'oldest') filtered = [...filtered].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            else if (sortMode === 'confidence') filtered = [...filtered].sort((a, b) => (b.confidence || 0) - (a.confidence || 0));
+            else filtered = [...filtered].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            const withEvidence = filtered.filter(v => !!v.imageUrl);
+            if (!withEvidence.length) {
+                showAlert('No visible items have downloadable evidence');
+                return;
+            }
+
+            // Trigger sequential downloads to avoid browser pop-up blocking.
+            withEvidence.slice(0, 10).forEach((v, idx) => {
+                setTimeout(() => downloadEvidence(v.id), idx * 450);
+            });
+            showAlert(`Downloading ${Math.min(withEvidence.length, 10)} evidence file(s)`);
+        }
+
+        // ======================================================
+        // IMAGE MODAL
+        // ======================================================
+        function openImage(id) {
+            const data = getViolations();
+            const violation = data.find(v => String(v.id) === String(id));
+            if (!violation?.imageUrl) {
+                showAlert('No image evidence available for this record');
+                return;
+            }
+            const src = violation.imageUrl;
+            document.getElementById('fullImage').src = src;
+            document.getElementById('imageModal').classList.add('active');
+        }
+
+        // ======================================================
+        // EXPORT FUNCTIONS
+        // ======================================================
+        function exportCSV() {
+            const data = getViolations();
+            let csv = 'Timestamp,Plate Number,Confidence,Action\n';
+            data.forEach(v => {
+                csv += `${v.timestamp},${v.plate},${v.confidence}%,${v.action}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `violations_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            showAlert('CSV exported successfully');
+        }
+
+        // ======================================================
+        // AUTO REFRESH
+        // ======================================================
+        let refreshInterval;
+        let violationsPollInterval;
+        function toggleRefresh() {
+            const toggle = document.getElementById('refreshToggle');
+            toggle.classList.toggle('active');
+            
+            if (toggle.classList.contains('active')) {
+                refreshInterval = setInterval(() => {
+                    document.getElementById('lastUpdated').innerHTML = `<i class="fas fa-clock"></i> Updated: ${new Date().toLocaleTimeString()}`;
+                    // Simulate new data occasionally
+                    if (Math.random() > 0.7) {
+                        addMockViolation();
+                    }
+                }, 10000);
+            } else {
+                clearInterval(refreshInterval);
+            }
+        }
+
+        // ======================================================
+        // ALERT SYSTEM
+        // ======================================================
+        function showAlert(message, logToNotifications = true) {
+            const alert = document.getElementById('alert');
+            alert.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+            alert.classList.add('show');
+            setTimeout(() => alert.classList.remove('show'), 3000);
+            if (logToNotifications) addNotification(message);
+        }
+
+        // ======================================================
+        // NOTIFICATIONS
+        // ======================================================
+        function getNotifications() {
+            return JSON.parse(localStorage.getItem('notifications') || '[]');
+        }
+
+        function saveNotifications(items) {
+            localStorage.setItem('notifications', JSON.stringify(items));
+        }
+
+        function addNotification(message) {
+            const items = getNotifications();
+            items.unshift({
+                id: Date.now() + Math.floor(Math.random() * 1000),
+                message,
+                timestamp: new Date().toISOString(),
+                unread: true
+            });
+            // Keep lightweight
+            saveNotifications(items.slice(0, 40));
+            renderNotifications();
+        }
+
+        function renderNotifications() {
+            const list = document.getElementById('notifList');
+            if (!list) return;
+            const items = getNotifications();
+            const unreadCount = items.filter(n => n.unread).length;
+
+            const badge = document.getElementById('notifBadge');
+            if (badge) {
+                badge.textContent = String(unreadCount);
+                badge.style.display = unreadCount ? 'inline-flex' : 'none';
+            }
+
+            if (!items.length) {
+                list.innerHTML = `<div style="padding:1.4rem; color:#64748b; text-align:center;">
+                    <i class="fas fa-bell-slash" style="font-size:1.6rem; margin-bottom:0.6rem; opacity:0.6;"></i>
+                    <div style="font-weight:700; color:#0a1929;">No notifications</div>
+                    <div style="margin-top:0.2rem;">Events will appear here as activity happens.</div>
+                </div>`;
+                return;
+            }
+
+            list.innerHTML = items.map(n => `
+                <div class="notif-item ${n.unread ? 'unread' : ''}" onclick="markNotificationRead(${n.id})" role="button" tabindex="0">
+                    <div class="notif-title">${n.unread ? 'New event' : 'Event'}</div>
+                    <div class="notif-time">${timeAgo(n.timestamp)}</div>
+                    <div class="notif-meta">${n.message}</div>
+                </div>
+            `).join('');
+        }
+
+        function toggleNotifications(open) {
+            const drawer = document.getElementById('notifDrawer');
+            if (!drawer) return;
+            drawer.classList.toggle('active', !!open);
+            drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+            if (open) renderNotifications();
+        }
+
+        function markNotificationRead(id) {
+            const items = getNotifications();
+            const n = items.find(x => x.id === id);
+            if (n) n.unread = false;
+            saveNotifications(items);
+            renderNotifications();
+        }
+
+        function markAllNotificationsRead() {
+            const items = getNotifications();
+            items.forEach(n => n.unread = false);
+            saveNotifications(items);
+            renderNotifications();
+            showAlert('All notifications marked read', false);
+        }
+
+        function clearNotifications() {
+            if (!confirm('Clear all notifications?')) return;
+            saveNotifications([]);
+            renderNotifications();
+            showAlert('Notifications cleared', false);
+        }
+
+        // ======================================================
+        // PAGE NAVIGATION
+        // ======================================================
+        function showPage(pageId) {
+            // Hide all pages
+            ['home', 'dashboard', 'analytics', 'gallery', 'about'].forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).style.display = 'block';
+            
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.textContent.toLowerCase().includes(pageId)) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Refresh page-specific content
+            if (pageId === 'dashboard') renderTable();
+            if (pageId === 'analytics') initCharts();
+            if (pageId === 'gallery') updateGallery();
+        }
+
+        // ======================================================
+        // CHARTS
+        // ======================================================
+        let hourlyChart, dailyChart;
+        
+        function initCharts() {
+            // Destroy existing charts if they exist
+            if (hourlyChart) hourlyChart.destroy();
+            if (dailyChart) dailyChart.destroy();
+            
+            // Hourly chart
+            const ctxHourly = document.getElementById('hourlyChart').getContext('2d');
+            hourlyChart = new Chart(ctxHourly, {
+                type: 'bar',
+                data: {
+                    labels: Array.from({length: 24}, (_, i) => i + ':00'),
+                    datasets: [{
+                        label: 'Violations',
+                        data: [2, 1, 0, 0, 1, 0, 2, 5, 8, 12, 15, 18, 14, 10, 8, 12, 22, 28, 25, 18, 12, 8, 4, 2],
+                        backgroundColor: '#dc2626',
+                        borderRadius: 8,
+                        barPercentage: 0.7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // Daily chart
+            const ctxDaily = document.getElementById('dailyChart').getContext('2d');
+            dailyChart = new Chart(ctxDaily, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Violations',
+                        data: [18, 22, 26, 19, 31, 12, 9],
+                        borderColor: '#0a1929',
+                        backgroundColor: 'rgba(10, 25, 41, 0.1)',
+                        tension: 0.3,
+                        pointBackgroundColor: '#dc2626',
+                        pointBorderColor: 'white',
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // Update frequent plates
+            updateFrequentPlates();
+        }
+
+        function updateFrequentPlates() {
+            const data = getViolations();
+            const plateCount = {};
+            data.forEach(v => plateCount[v.plate] = (plateCount[v.plate] || 0) + 1);
+            
+            const sorted = Object.entries(plateCount)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+            
+            const container = document.getElementById('frequentPlatesList');
+            container.innerHTML = sorted.map(([plate, count]) => `
+                <div class="plate-tag">
+                    <i class="fas fa-motorcycle"></i>
+                    ${plate}
+                    <span>${count}x</span>
+                </div>
+            `).join('');
+        }
+
+        // ======================================================
+        // LIVE STATUS TOGGLE
+        // ======================================================
+        document.querySelector('.live-indicator').addEventListener('click', function() {
+            const dot = document.getElementById('liveStatus');
+            const text = document.getElementById('liveText');
+            
+            if (dot.classList.contains('offline')) {
+                dot.classList.remove('offline');
+                text.textContent = 'Camera Online';
+                showAlert('Camera system activated');
+            } else {
+                dot.classList.add('offline');
+                text.textContent = 'Camera Offline';
+                showAlert('Camera system paused');
+            }
+        });
+
+        // ======================================================
+        // INITIALIZATION
+        // ======================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTable();
+            updateGallery();
+            fetchViolations();
+            violationsPollInterval = setInterval(fetchViolations, 10000);
+            initCharts();
+            renderNotifications();
+            
+            // Start auto-refresh by default (legacy clock + mock injection when not using API list)
+            refreshInterval = setInterval(() => {
+                const lu = document.getElementById('lastUpdated');
+                if (lu && apiViolations === null) {
+                    lu.innerHTML = `<i class="fas fa-clock"></i> Updated: ${new Date().toLocaleTimeString()}`;
+                }
+            }, 10000);
+        });
+    </script>
+</body>
+</html>

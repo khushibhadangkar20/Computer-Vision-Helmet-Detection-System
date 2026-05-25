@@ -1,0 +1,10 @@
+path: W:\Ayoo\Helmet Detection\data
+train: train/images
+val: images
+test: test/images
+nc: 4
+names:
+  0: Helmet
+  1: Human head
+  2: Motorcycle
+  3: Vehicle registration plate
