@@ -1,8 +1,8 @@
-import os
 import csv
-from datetime import datetime
+import os
 import time
 import winsound
+from datetime import datetime
 
 import cv2
 import easyocr
@@ -184,9 +184,7 @@ while cap.isOpened():
             human_timestamp = timestamp.replace("_", " ")
             with open(LOG_PATH, mode="a", newline="", encoding="utf-8") as f:
                 writer = csv.writer(f)
-                writer.writerow(
-                    [human_timestamp, plate_text, f"{best_plate['conf']:.2f}", image_path]
-                )
+                writer.writerow([human_timestamp, plate_text, f"{best_plate['conf']:.2f}", image_path])
 
             # Beep notification
             winsound.Beep(1000, 500)
@@ -202,7 +200,7 @@ while cap.isOpened():
             rows = []
             found = False
             if os.path.exists(HOURLY_LOG_PATH):
-                with open(HOURLY_LOG_PATH, mode="r", newline="", encoding="utf-8") as f:
+                with open(HOURLY_LOG_PATH, newline="", encoding="utf-8") as f:
                     reader_csv = csv.reader(f)
                     rows = list(reader_csv)
 
