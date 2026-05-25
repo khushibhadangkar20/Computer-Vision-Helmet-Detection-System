@@ -19,17 +19,17 @@ College campuses face challenges enforcing helmet rules at entry gates. Manual c
 
 A real-time AI system placed at the college entry gate that:
 
-* Detects riders without helmets automatically
-* Captures violation images with timestamp
-* Reads number plate using OCR
-* Logs all violations for admin review
+- Detects riders without helmets automatically
+- Captures violation images with timestamp
+- Reads number plate using OCR
+- Logs all violations for admin review
 
 ---
 
 ## 🎯 Features
 
-| Feature                          | Status |
-| -------------------------------- | ------ |
+| Feature                          | Status  |
+| -------------------------------- | ------- |
 | Real-time helmet detection       | ✅ Done |
 | No-helmet violation trigger      | ✅ Done |
 | Violation image capture          | ✅ Done |
@@ -48,16 +48,16 @@ A real-time AI system placed at the college entry gate that:
 
 ## 🧠 AI Model
 
-* **Architecture:** YOLOv5s (Custom Trained)
-* **Confidence Threshold:** 0.25
-* **NMS IoU Threshold:** 0.45
+- **Architecture:** YOLOv5s (Custom Trained)
+- **Confidence Threshold:** 0.25
+- **NMS IoU Threshold:** 0.45
 
 ### Classes Detected:
 
-* `0 → Helmet`
-* `1 → Human Head`
-* `2 → Motorcycle`
-* `3 → Vehicle Registration Plate`
+- `0 → Helmet`
+- `1 → Human Head`
+- `2 → Motorcycle`
+- `3 → Vehicle Registration Plate`
 
 ---
 
@@ -184,18 +184,18 @@ Deployed at college entry gate to enforce helmet rules, reduce manual checking, 
 
 ### Future Extensions:
 
-* Traffic enforcement systems
-* CCTV integration
-* Automated fine generation
+- Traffic enforcement systems
+- CCTV integration
+- Automated fine generation
 
 ---
 
 ## 👥 Team
 
-* Tanmay Kshirsagar
-* Atharva Borate
-* Khushi Bhadangkar
-* Anushri Ghosh
+- Tanmay Kshirsagar
+- Atharva Borate
+- Khushi Bhadangkar
+- Anushri Ghosh
 
 ---
 
