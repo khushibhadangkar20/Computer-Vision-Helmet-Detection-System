@@ -3,7 +3,7 @@ torchvision
 opencv-python
 easyocr
 flask
-numpy
+numpy>=2.0.2
 Pillow
 # YOLOv5 requirements
 # Usage: pip install -r requirements.txt
@@ -11,7 +11,7 @@ Pillow
 # Base ------------------------------------------------------------------------
 gitpython>=3.1.30
 matplotlib>=3.3
-numpy>=1.23.5
+numpy>=2.0.2>=1.23.5
 opencv-python>=4.1.1
 pillow>=10.3.0
 psutil  # system resources
