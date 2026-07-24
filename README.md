@@ -38,7 +38,6 @@ A real-time AI system placed at the college entry gate that:
 | 10 second cooldown timer         | ✅ Done |
 | Live violation counter on screen | ✅ Done |
 | Red border alert on violation    | ✅ Done |
-| Confidence score logging         | ✅ Done |
 | Hourly violation stats           | ✅ Done |
 | Web dashboard                    | ✅ Done |
 | Video upload analysis            | ✅ Done |
