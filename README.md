@@ -179,7 +179,7 @@ http://localhost:5000
 
 ## 🏫 Use Case
 
-Deployed at college entry gate to enforce helmet rules, reduce manual checking, and improve campus safety.
+To be deployed at college entry gate to enforce helmet rules, reduce manual checking, and improve campus safety.
 
 ### Future Extensions:
 
