@@ -11,7 +11,7 @@
 
 ## 📌 Problem Statement
 
-College campuses face challenges enforcing helmet rules at entry gates. Manual checking is inefficient, inconsistent, and requires dedicated staff. This system automates the entire process using AI and computer vision.
+College campuses face challenges enforcing helmet rules at entry gates. Manual checking is inefficient & inconsistent, and requires dedicated staff. This system automates the entire process using AI and computer vision.
 
 ---
 
